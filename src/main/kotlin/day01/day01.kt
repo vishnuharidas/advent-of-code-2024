@@ -13,9 +13,19 @@ fun main(){
     val leftList = linesOfNums.map { it.first().toInt() }.sorted()    // Sorted left list
     val rightList = linesOfNums.map { it.last().toInt() }.sorted()    // Sorted right list
 
+    // Part 1: find sum of differences
     val sumDiffs = leftList.zip(rightList) // Combined into pairs
         .sumOf { abs(it.first - it.second) }
 
-    println("Sum of differences: $sumDiffs")
+    println("Part 01: $sumDiffs")
+
+    // Part 2: find sum of "similarity scores"
+    val sumOfSimilarityScores = leftList
+        .distinct()
+        .associateWith { i -> rightList.count { it == i } }
+        .map { it.key * it.value }
+        .sum()
+
+    println("Part 02: $sumOfSimilarityScores")
 
 }
