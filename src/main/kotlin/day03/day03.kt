@@ -4,25 +4,33 @@ import util.getFileLines
 
 fun main() {
 
-    val linesOfCode = getFileLines("day03/input.txt").lines().filter { it.isNotEmpty() }
+    fun sumOfMuls(string: String) = """mul\((\d{1,3}),(\d{1,3})\)"""
+        .toRegex()
+        .findAll(string)
+        .map {
+            it.groupValues[1].toInt() to it.groupValues[2].toInt() // Pair(X,Y)
+        }
+        .sumOf { it.first * it.second } // Sum of `Pair(X,Y)` from a single line
 
-    linesOfCode.forEach { println(it) }
 
-    val regex = """mul\((\d{1,3}),(\d{1,3})\)""".toRegex()
+    val instructions = getFileLines("day03/input.txt")
+        .lines()
+        .filter { it.isNotEmpty() }
+        .joinToString("")
+
 
     // Part 1: Find the total of actual `mul(X,Y)` instructions.
-    val total = linesOfCode
-        .map {
-            // Find all `mul(X,Y)` and then generate a List<Pair(X,Y)>
-            regex.findAll(it)
-                .map { result ->
-                    result.groupValues[1].toInt() to result.groupValues[2].toInt() // Pair(X,Y)
-                }
-                .toList()
-        }
-        .sumOf { // Sum of totals from all lines
-            it.sumOf { p -> p.first * p.second } // Sum of `Pair(X,Y)` from a single line
+    println("Total 1: ${sumOfMuls(instructions)}")
+
+
+    // Part 2: Consider `do()` and `don't()` also.
+    val total2 = """(^|do\(\)).*?(${'$'}|don't\(\))"""
+        .toRegex()
+        .findAll(instructions)
+        .sumOf { matchResult ->
+            sumOfMuls(matchResult.value)
         }
 
-    println("Total: $total")
+    println("Total 2: $total2")
+
 }
