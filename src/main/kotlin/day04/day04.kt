@@ -31,7 +31,25 @@ fun main() {
         return listOf(n, e, s, w, ne, nw, se, sw).count { it }
     }
 
+    fun findMasCount(r: Int, c: Int, matrix: List<String>): Int {
 
+        fun hasWord(predicate: () -> Boolean) = try {
+            predicate()
+        } catch (e: Exception) {
+            false
+        }
+
+        // Diagonal
+        val ne = hasWord { matrix[r + 1][c - 1] == 'M' && matrix[r - 1][c + 1] == 'S' }
+        val nw = hasWord { matrix[r + 1][c + 1] == 'M' && matrix[r - 1][c - 1] == 'S' }
+        val se = hasWord { matrix[r - 1][c - 1] == 'M' && matrix[r + 1][c + 1] == 'S' }
+        val sw = hasWord { matrix[r - 1][c + 1] == 'M' && matrix[r + 1][c - 1] == 'S' }
+
+        return if ((ne || sw) && (nw || se)) 1 else 0
+    }
+
+
+    // Part 1: Find the number of "XMAS" in the matrix, in any order.
     var totalXmas = 0
     matrix.forEachIndexed { row, s ->
         s.forEachIndexed { col, c ->
@@ -42,4 +60,16 @@ fun main() {
     }
 
     println("Total XMAS: $totalXmas")
+
+    // Part 2: find the string "MAS" in the shape of X
+    var totalMas = 0
+    matrix.forEachIndexed { row, s ->
+        s.forEachIndexed { col, c ->
+            if (c == 'A') {
+                totalMas += findMasCount(row, col, matrix)
+            }
+        }
+    }
+
+    println("Total X-shaped-MAS: $totalMas")
 }
